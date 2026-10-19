@@ -299,15 +299,13 @@
       border: 2px dashed #0d9488;
       border-radius: 8px;
       overflow: hidden;
-      touch-action: none !important;
-      -webkit-user-select: none;
-      user-select: none;
+      touch-action: none;
     }
     #signatureCanvas {
       width: 100%;
       height: 100%;
       display: block;
-      touch-action: none !important;
+      touch-action: none;
       cursor: crosshair;
     }
     .canvas-hint {
@@ -389,20 +387,6 @@
       display: none;
     }
 
-    /* FIX CHO MÀN HÌNH ĐIỆN THOẠI (CHỐNG TRÀN 3 TRANG) */
-    @media (max-width: 600px) {
-      body { padding: 6px; padding-bottom: 80px; }
-      .container { padding: 10px; }
-      table.check-table { font-size: 11px; word-wrap: break-word; }
-      table.check-table th, table.check-table td { padding: 4px 5px; }
-      .req-list { padding-left: 10px; }
-      .btn-toggle { min-width: 36px; padding: 4px 6px; font-size: 11px; }
-      .note-input { padding: 4px; }
-      .top-actions { justify-content: space-between; gap: 4px; }
-      .action-btn { font-size: 11px; padding: 8px 4px; flex: 1; text-align: center; justify-content: center; }
-      .info-section { grid-template-columns: 1fr; }
-    }
-
     @media print {
       body {
         background: transparent;
@@ -430,6 +414,14 @@
         size: A4 portrait;
         margin: 12mm 15mm;
       }
+    }
+
+    /* CHỐNG TRÀN 3 TRANG TRÊN IPHONE */
+    @media (max-width: 768px) {
+      .doc-header { flex-direction: column; gap: 10px; text-align: center; }
+      .brand-right { justify-content: center; }
+      .conclusion-choices { flex-direction: column; gap: 10px; }
+      .sign-header { flex-direction: column; gap: 10px; align-items: flex-start; }
     }
   </style>
 </head>
@@ -488,207 +480,213 @@
     <div class="section-head">1 Kiểm tra trước khi bật nguồn</div>
     <div class="section-subhead">1.1 Kiểm tra bằng mắt thường</div>
 
-    <table class="check-table">
-      <thead>
-        <tr>
-          <th style="width: 20%;">Hạng mục</th>
-          <th style="width: 50%;">Yêu cầu</th>
-          <th style="width: 15%;">Kết quả</th>
-          <th style="width: 15%;">Ghi chú</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Khóa -->
-        <tr data-item-id="lock">
-          <td><strong>Khóa</strong></td>
-          <td>
-            <ul class="req-list">
-              <li>Lắp đặt chắc chắn trên backplate</li>
-              <li>Đã thay thế toàn bộ khóa ZZ</li>
-              <li>Không có dấu hiệu bị lệch, bị kẹt</li>
-              <li>Đảm bảo lắp đủ ốc để cố định, siết đủ lực theo tiêu chuẩn.</li>
-              <li>Backplate lắp chắc chắn, siết đủ lực, không thiếu ốc với khoang pin.</li>
-            </ul>
-          </td>
-          <td style="text-align: center;">
-            <div class="toggle-group screen-only">
-              <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('lock', 'OK', this)">OK</button>
-              <button type="button" class="btn-toggle " onclick="toggleStatus('lock', 'NOK', this)">NOK</button>
-            </div>
-            <div class="print-only">
-              <span>OK <span class="chk-ok">☑</span></span>
-              <span>NOK <span class="chk-nok">□</span></span>
-            </div>
-          </td>
-          <td>
-            <input type="text" class="note-input" id="note_lock" value="" placeholder="Ghi chú..." />
-          </td>
-        </tr>
+    <!-- KHUNG CHỐNG TRÀN BẢNG 1 -->
+    <div style="width: 100%; overflow-x: auto; margin-bottom: 16px;">
+      <table class="check-table" style="margin-bottom: 0; min-width: 650px;">
+        <thead>
+          <tr>
+            <th style="width: 20%;">Hạng mục</th>
+            <th style="width: 50%;">Yêu cầu</th>
+            <th style="width: 15%;">Kết quả</th>
+            <th style="width: 15%;">Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Khóa -->
+          <tr data-item-id="lock">
+            <td><strong>Khóa</strong></td>
+            <td>
+              <ul class="req-list">
+                <li>Lắp đặt chắc chắn trên backplate</li>
+                <li>Đã thay thế toàn bộ khóa ZZ</li>
+                <li>Không có dấu hiệu bị lệch, bị kẹt</li>
+                <li>Đảm bảo lắp đủ ốc để cố định, siết đủ lực theo tiêu chuẩn.</li>
+                <li>Backplate lắp chắc chắn, siết đủ lực, không thiếu ốc với khoang pin.</li>
+              </ul>
+            </td>
+            <td style="text-align: center;">
+              <div class="toggle-group screen-only">
+                <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('lock', 'OK', this)">OK</button>
+                <button type="button" class="btn-toggle " onclick="toggleStatus('lock', 'NOK', this)">NOK</button>
+              </div>
+              <div class="print-only">
+                <span>OK <span class="chk-ok">☑</span></span>
+                <span>NOK <span class="chk-nok">□</span></span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="note-input" id="note_lock" value="" placeholder="Ghi chú..." />
+            </td>
+          </tr>
 
-        <!-- Conector -->
-        <tr data-item-id="connector">
-          <td><strong>Conector</strong></td>
-          <td>
-            <ul class="req-list">
-              <li>Đã thay thế đầy đủ ốc chống trượt, siết đủ lực theo tiêu chuẩn.</li>
-              <li>Không có dấu hiệu bị lệch, kẹt.</li>
-            </ul>
-          </td>
-          <td style="text-align: center;">
-            <div class="toggle-group screen-only">
-              <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('connector', 'OK', this)">OK</button>
-              <button type="button" class="btn-toggle " onclick="toggleStatus('connector', 'NOK', this)">NOK</button>
-            </div>
-            <div class="print-only">
-              <span>OK <span class="chk-ok">☑</span></span>
-              <span>NOK <span class="chk-nok">□</span></span>
-            </div>
-          </td>
-          <td>
-            <input type="text" class="note-input" id="note_connector" value="" placeholder="Ghi chú..." />
-          </td>
-        </tr>
+          <!-- Conector -->
+          <tr data-item-id="connector">
+            <td><strong>Conector</strong></td>
+            <td>
+              <ul class="req-list">
+                <li>Đã thay thế đầy đủ ốc chống trượt, siết đủ lực theo tiêu chuẩn.</li>
+                <li>Không có dấu hiệu bị lệch, kẹt.</li>
+              </ul>
+            </td>
+            <td style="text-align: center;">
+              <div class="toggle-group screen-only">
+                <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('connector', 'OK', this)">OK</button>
+                <button type="button" class="btn-toggle " onclick="toggleStatus('connector', 'NOK', this)">NOK</button>
+              </div>
+              <div class="print-only">
+                <span>OK <span class="chk-ok">☑</span></span>
+                <span>NOK <span class="chk-nok">□</span></span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="note-input" id="note_connector" value="" placeholder="Ghi chú..." />
+            </td>
+          </tr>
 
-        <!-- Khoang pin -->
-        <tr data-item-id="battery_bay">
-          <td><strong>Khoang pin</strong></td>
-          <td>
-            <ul class="req-list">
-              <li>Không có dị vật bên trong khoang pin</li>
-            </ul>
-          </td>
-          <td style="text-align: center;">
-            <div class="toggle-group screen-only">
-              <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('battery_bay', 'OK', this)">OK</button>
-              <button type="button" class="btn-toggle " onclick="toggleStatus('battery_bay', 'NOK', this)">NOK</button>
-            </div>
-            <div class="print-only">
-              <span>OK <span class="chk-ok">☑</span></span>
-              <span>NOK <span class="chk-nok">□</span></span>
-            </div>
-          </td>
-          <td>
-            <input type="text" class="note-input" id="note_battery_bay" value="" placeholder="Ghi chú..." />
-          </td>
-        </tr>
+          <!-- Khoang pin -->
+          <tr data-item-id="battery_bay">
+            <td><strong>Khoang pin</strong></td>
+            <td>
+              <ul class="req-list">
+                <li>Không có dị vật bên trong khoang pin</li>
+              </ul>
+            </td>
+            <td style="text-align: center;">
+              <div class="toggle-group screen-only">
+                <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('battery_bay', 'OK', this)">OK</button>
+                <button type="button" class="btn-toggle " onclick="toggleStatus('battery_bay', 'NOK', this)">NOK</button>
+              </div>
+              <div class="print-only">
+                <span>OK <span class="chk-ok">☑</span></span>
+                <span>NOK <span class="chk-nok">□</span></span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="note-input" id="note_battery_bay" value="" placeholder="Ghi chú..." />
+            </td>
+          </tr>
 
-        <!-- Dây tín hiệu, dây nguồn -->
-        <tr data-item-id="signal_power_cables">
-          <td><strong>Dây tín hiệu, dây nguồn</strong></td>
-          <td>
-            <ul class="req-list">
-              <li>Dây tín hiệu được lắp đặt đúng ví trí</li>
-              <li>Không có dấu hiệu lỏng chưa kết nối</li>
-            </ul>
-          </td>
-          <td style="text-align: center;">
-            <div class="toggle-group screen-only">
-              <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('signal_power_cables', 'OK', this)">OK</button>
-              <button type="button" class="btn-toggle " onclick="toggleStatus('signal_power_cables', 'NOK', this)">NOK</button>
-            </div>
-            <div class="print-only">
-              <span>OK <span class="chk-ok">☑</span></span>
-              <span>NOK <span class="chk-nok">□</span></span>
-            </div>
-          </td>
-          <td>
-            <input type="text" class="note-input" id="note_signal_power_cables" value="" placeholder="Ghi chú..." />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          <!-- Dây tín hiệu, dây nguồn -->
+          <tr data-item-id="signal_power_cables">
+            <td><strong>Dây tín hiệu, dây nguồn</strong></td>
+            <td>
+              <ul class="req-list">
+                <li>Dây tín hiệu được lắp đặt đúng ví trí</li>
+                <li>Không có dấu hiệu lỏng chưa kết nối</li>
+              </ul>
+            </td>
+            <td style="text-align: center;">
+              <div class="toggle-group screen-only">
+                <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('signal_power_cables', 'OK', this)">OK</button>
+                <button type="button" class="btn-toggle " onclick="toggleStatus('signal_power_cables', 'NOK', this)">NOK</button>
+              </div>
+              <div class="print-only">
+                <span>OK <span class="chk-ok">☑</span></span>
+                <span>NOK <span class="chk-nok">□</span></span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="note-input" id="note_signal_power_cables" value="" placeholder="Ghi chú..." />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- 2. Kiểm tra sau khi bật nguồn -->
     <div class="section-head">2. Kiểm tra sau khi bật nguồn</div>
 
-    <table class="check-table">
-      <thead>
-        <tr>
-          <th style="width: 20%;">Hạng mục</th>
-          <th style="width: 50%;">Yêu cầu</th>
-          <th style="width: 15%;">Kết quả</th>
-          <th style="width: 15%;">Ghi chú</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Kiểm tra điện áp -->
-        <tr data-item-id="voltage_check">
-          <td><strong>Kiểm tra điện áp</strong></td>
-          <td>
-            <ul class="req-list">
-              <li>Điện áp đầu vào trong dải: 220V (±10%), không có hiện tượng ngắn mạch, bất thường khác.</li>
-            </ul>
-          </td>
-          <td style="text-align: center;">
-            <div class="toggle-group screen-only">
-              <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('voltage_check', 'OK', this)">OK</button>
-              <button type="button" class="btn-toggle " onclick="toggleStatus('voltage_check', 'NOK', this)">NOK</button>
-            </div>
-            <div class="print-only">
-              <span>OK <span class="chk-ok">☑</span></span>
-              <span>NOK <span class="chk-nok">□</span></span>
-            </div>
-          </td>
-          <td>
-            <input type="text" class="note-input" id="note_voltage_check" value="" placeholder="Ghi chú..." />
-          </td>
-        </tr>
+    <!-- KHUNG CHỐNG TRÀN BẢNG 2 -->
+    <div style="width: 100%; overflow-x: auto; margin-bottom: 16px;">
+      <table class="check-table" style="margin-bottom: 0; min-width: 650px;">
+        <thead>
+          <tr>
+            <th style="width: 20%;">Hạng mục</th>
+            <th style="width: 50%;">Yêu cầu</th>
+            <th style="width: 15%;">Kết quả</th>
+            <th style="width: 15%;">Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Kiểm tra điện áp -->
+          <tr data-item-id="voltage_check">
+            <td><strong>Kiểm tra điện áp</strong></td>
+            <td>
+              <ul class="req-list">
+                <li>Điện áp đầu vào trong dải: 220V (±10%), không có hiện tượng ngắn mạch, bất thường khác.</li>
+              </ul>
+            </td>
+            <td style="text-align: center;">
+              <div class="toggle-group screen-only">
+                <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('voltage_check', 'OK', this)">OK</button>
+                <button type="button" class="btn-toggle " onclick="toggleStatus('voltage_check', 'NOK', this)">NOK</button>
+              </div>
+              <div class="print-only">
+                <span>OK <span class="chk-ok">☑</span></span>
+                <span>NOK <span class="chk-nok">□</span></span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="note-input" id="note_voltage_check" value="" placeholder="Ghi chú..." />
+            </td>
+          </tr>
 
-        <!-- Tính năng khóa và nhả pin -->
-        <tr data-item-id="lock_release_action">
-          <td><strong>Tính năng khóa và nhả pin</strong></td>
-          <td>
-            <ul class="req-list">
-              <li>Bước 1: Cấp nguồn cho tủ và chờ tủ khởi động</li>
-              <li>Bước 2 Tắt tủ, đẩy hết pin ra ngoài</li>
-              <li>Bước 3: Bật lại nguồn chờ BSS khởi động lại, đảm bảo BSS khởi động 2 lần và Pin ở ngoài tủ</li>
-              <li>Bước 3: Tủ self check thành công,cắm Pin vào tủ</li>
-              <li>Bước 4: Tủ sẽ đẩy Pin ra ngoài, làm liên tục 3 lần trên 1 khoang pin.</li>
-              <li>3 lần thực hiện tủ đều nhận và nhả pin lần đầu, không có dấu hiệu bị kẹt.</li>
-            </ul>
-          </td>
-          <td style="text-align: center;">
-            <div class="toggle-group screen-only">
-              <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('lock_release_action', 'OK', this)">OK</button>
-              <button type="button" class="btn-toggle " onclick="toggleStatus('lock_release_action', 'NOK', this)">NOK</button>
-            </div>
-            <div class="print-only">
-              <span>OK <span class="chk-ok">☑</span></span>
-              <span>NOK <span class="chk-nok">□</span></span>
-            </div>
-          </td>
-          <td>
-            <input type="text" class="note-input" id="note_lock_release_action" value="" placeholder="Ghi chú..." />
-          </td>
-        </tr>
+          <!-- Tính năng khóa và nhả pin -->
+          <tr data-item-id="lock_release_action">
+            <td><strong>Tính năng khóa và nhả pin</strong></td>
+            <td>
+              <ul class="req-list">
+                <li>Bước 1: Cấp nguồn cho tủ và chờ tủ khởi động</li>
+                <li>Bước 2 Tắt tủ, đẩy hết pin ra ngoài</li>
+                <li>Bước 3: Bật lại nguồn chờ BSS khởi động lại, đảm bảo BSS khởi động 2 lần và Pin ở ngoài tủ</li>
+                <li>Bước 3: Tủ self check thành công,cắm Pin vào tủ</li>
+                <li>Bước 4: Tủ sẽ đẩy Pin ra ngoài, làm liên tục 3 lần trên 1 khoang pin.</li>
+                <li>3 lần thực hiện tủ đều nhận và nhả pin lần đầu, không có dấu hiệu bị kẹt.</li>
+              </ul>
+            </td>
+            <td style="text-align: center;">
+              <div class="toggle-group screen-only">
+                <button type="button" class="btn-toggle active-ok" onclick="toggleStatus('lock_release_action', 'OK', this)">OK</button>
+                <button type="button" class="btn-toggle " onclick="toggleStatus('lock_release_action', 'NOK', this)">NOK</button>
+              </div>
+              <div class="print-only">
+                <span>OK <span class="chk-ok">☑</span></span>
+                <span>NOK <span class="chk-nok">□</span></span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="note-input" id="note_lock_release_action" value="" placeholder="Ghi chú..." />
+            </td>
+          </tr>
 
-        <!-- Phần mềm -->
-        <tr data-item-id="software">
-          <td><strong>Phần mềm</strong></td>
-          <td>
-            <ul class="req-list">
-              <li>Phiên bản phần mềm đúng với phiên bản mới nhất đã được release trên hệ thống</li>
-              <li style="list-style: none; margin-left: -14px; font-weight: 500; margin-top: 3px;">QT: CC_260806_BSS6 / CC_2600806_BSS12</li>
-              <li style="list-style: none; margin-left: -14px; font-weight: 500;">CCR: v1.1.100.77</li>
-              <li style="list-style: none; margin-left: -14px; font-weight: 500;">BCC: v1.0.0.62</li>
-            </ul>
-          </td>
-          <td style="text-align: center;">
-            <div class="toggle-group screen-only">
-              <button type="button" class="btn-toggle " onclick="toggleStatus('software', 'OK', this)">OK</button>
-              <button type="button" class="btn-toggle " onclick="toggleStatus('software', 'NOK', this)">NOK</button>
-            </div>
-            <div class="print-only">
-              <span>OK <span class="chk-ok">□</span></span>
-              <span>NOK <span class="chk-nok">□</span></span>
-            </div>
-          </td>
-          <td>
-            <input type="text" class="note-input" id="note_software" value="" placeholder="Ghi chú..." />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          <!-- Phần mềm -->
+          <tr data-item-id="software">
+            <td><strong>Phần mềm</strong></td>
+            <td>
+              <ul class="req-list">
+                <li>Phiên bản phần mềm đúng với phiên bản mới nhất đã được release trên hệ thống</li>
+                <li style="list-style: none; margin-left: -14px; font-weight: 500; margin-top: 3px;">QT: CC_260806_BSS6 / CC_2600806_BSS12</li>
+                <li style="list-style: none; margin-left: -14px; font-weight: 500;">CCR: v1.1.100.77</li>
+                <li style="list-style: none; margin-left: -14px; font-weight: 500;">BCC: v1.0.0.62</li>
+              </ul>
+            </td>
+            <td style="text-align: center;">
+              <div class="toggle-group screen-only">
+                <button type="button" class="btn-toggle " onclick="toggleStatus('software', 'OK', this)">OK</button>
+                <button type="button" class="btn-toggle " onclick="toggleStatus('software', 'NOK', this)">NOK</button>
+              </div>
+              <div class="print-only">
+                <span>OK <span class="chk-ok">□</span></span>
+                <span>NOK <span class="chk-nok">□</span></span>
+              </div>
+            </td>
+            <td>
+              <input type="text" class="note-input" id="note_software" value="" placeholder="Ghi chú..." />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- 3. Kết luận / Conclusion -->
     <div class="section-head">3 Kết luận / Conclusion</div>
@@ -758,7 +756,7 @@
 
   <script>
     // Initial data
-    const appData = {"info":{"date":"2026-10-19","stationId":"B.DNA10067","stationAddress":"TP Đà Nẵng","serialNumber":"BSS-113e23824u4","engineerName":"Hà Văn Nam","technicianCode":"ENG-CC-109"},"items":[{"id":"lock","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Khóa","requirements":["Lắp đặt chắc chắn trên backplate","Đã thay thế toàn bộ khóa ZZ","Không có dấu hiệu bị lệch, bị kẹt","Đảm bảo lắp đủ ốc để cố định, siết đủ lực theo tiêu chuẩn.","Backplate lắp chắc chắn, siết đủ lực, không thiếu ốc với khoang pin."],"status":"OK","note":""},{"id":"connector","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Conector","requirements":["Đã thay thế đầy đủ ốc chống trượt, siết đủ lực theo tiêu chuẩn.","Không có dấu hiệu bị lệch, kẹt."],"status":"OK","note":""},{"id":"battery_bay","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Khoang pin","requirements":["Không có dị vật bên trong khoang pin"],"status":"OK","note":""},{"id":"signal_power_cables","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Dây tín hiệu, dây nguồn","requirements":["Dây tín hiệu được lắp đặt đúng ví trí","Không có dấu hiệu lỏng chưa kết nối"],"status":"OK","note":""},{"id":"voltage_check","category":"power_on","categoryTitle":"2. Kiểm tra sau khi bật nguồn","name":"Kiểm tra điện áp","requirements":["Điện áp đầu vào trong dải: 220V (±10%), không có hiện tượng ngắn mạch, bất thường khác."],"status":"OK","note":""},{"id":"lock_release_action","category":"power_on","categoryTitle":"2. Kiểm tra sau khi bật nguồn","name":"Tính năng khóa và nhả pin","requirements":["Bước 1: Cấp nguồn cho tủ và chờ tủ khởi động","Bước 2 Tắt tủ, đẩy hết pin ra ngoài","Bước 3: Bật lại nguồn chờ BSS khởi động lại, đảm bảo BSS khởi động 2 lần và Pin ở ngoài tủ","Bước 3: Tủ self check thành công,cắm Pin vào tủ","Bước 4: Tủ sẽ đẩy Pin ra ngoài, làm liên tục 3 lần trên 1 khoang pin.","3 lần thực hiện tủ đều nhận và nhả pin lần đầu, không có dấu hiệu bị kẹt."],"status":"OK","note":""},{"id":"software","category":"power_on","categoryTitle":"2. Kiểm tra sau khi bật nguồn","name":"Phần mềm","requirements":["Phiên bản phần mềm đúng với phiên bản mới nhất đã được release trên hệ thống","QT: CC_260806_BSS6 / CC_260806_BSS12","CCR: v1.1.100.77","BCC: v1.0.0.62"],"status":"","note":""}],"conclusion":{"result":"PASS","note":"OK, thay 6 khoá"},"signature":{"dataUrl":"data:image/png;base64,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","signedAt":"16:06:55 19/10/2026","signerName":"Hà Văn Nam"}};
+    const appData = {"info":{"date":"2026-10-19","stationId":"B.DNA10067","stationAddress":"TP Đà Nẵng","serialNumber":"BSS-113e23824u4","engineerName":"Hà Văn Nam","technicianCode":"ENG-CC-109"},"items":[{"id":"lock","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Khóa","requirements":["Lắp đặt chắc chắn trên backplate","Đã thay thế toàn bộ khóa ZZ","Không có dấu hiệu bị lệch, bị kẹt","Đảm bảo lắp đủ ốc để cố định, siết đủ lực theo tiêu chuẩn.","Backplate lắp chắc chắn, siết đủ lực, không thiếu ốc với khoang pin."],"status":"OK","note":""},{"id":"connector","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Conector","requirements":["Đã thay thế đầy đủ ốc chống trượt, siết đủ lực theo tiêu chuẩn.","Không có dấu hiệu bị lệch, kẹt."],"status":"OK","note":""},{"id":"battery_bay","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Khoang pin","requirements":["Không có dị vật bên trong khoang pin"],"status":"OK","note":""},{"id":"signal_power_cables","category":"visual","categoryTitle":"1.1 Kiểm tra bằng mắt thường","name":"Dây tín hiệu, dây nguồn","requirements":["Dây tín hiệu được lắp đặt đúng ví trí","Không có dấu hiệu lỏng chưa kết nối"],"status":"OK","note":""},{"id":"voltage_check","category":"power_on","categoryTitle":"2. Kiểm tra sau khi bật nguồn","name":"Kiểm tra điện áp","requirements":["Điện áp đầu vào trong dải: 220V (±10%), không có hiện tượng ngắn mạch, bất thường khác."],"status":"OK","note":""},{"id":"lock_release_action","category":"power_on","categoryTitle":"2. Kiểm tra sau khi bật nguồn","name":"Tính năng khóa và nhả pin","requirements":["Bước 1: Cấp nguồn cho tủ và chờ tủ khởi động","Bước 2 Tắt tủ, đẩy hết pin ra ngoài","Bước 3: Bật lại nguồn chờ BSS khởi động lại, đảm bảo BSS khởi động 2 lần và Pin ở ngoài tủ","Bước 3: Tủ self check thành công,cắm Pin vào tủ","Bước 4: Tủ sẽ đẩy Pin ra ngoài, làm liên tục 3 lần trên 1 khoang pin.","3 lần thực hiện tủ đều nhận và nhả pin lần đầu, không có dấu hiệu bị kẹt."],"status":"OK","note":""},{"id":"software","category":"power_on","categoryTitle":"2. Kiểm tra sau khi bật nguồn","name":"Phần mềm","requirements":["Phiên bản phần mềm đúng với phiên bản mới nhất đã được release trên hệ thống","QT: CC_260806_BSS6 / CC_260806_BSS12","CCR: v1.1.100.77","BCC: v1.0.0.62"],"status":"","note":""}],"conclusion":{"result":"PASS","note":"OK, thay 6 khoá"},"signature":{"dataUrl":"data:image/png;base64,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","signedAt":"16:06:55 19/10/2026","signerName":"Hà Văn Nam"}};
 
     // Canvas Signature Handling for Phone Touch
     const canvas = document.getElementById('signatureCanvas');
