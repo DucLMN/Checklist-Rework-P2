@@ -897,7 +897,7 @@
       }
     }
 
-    // Standalone Canvas Image Renderer (Generates pristine high-res PNG image)
+   // Hàm vẽ ảnh đã được sửa lỗi tràn chữ và thêm tên kỹ sư
     function exportChecklistAsImage() {
       const station = document.getElementById('input_stationId').value.trim() || 'CHARGECORE';
       const date = document.getElementById('input_date').value.trim() || '';
@@ -908,46 +908,37 @@
       const conclusionVal = conclusionRadio ? conclusionRadio.value : 'PASS';
       const conclusionNote = document.getElementById('conclusion_note').value.trim() || '';
 
-      // High-res canvas: 1654 x 2339px (Standard A4 aspect ratio 210x297mm @ 200DPI)
       const c = document.getElementById('renderExportCanvas');
       c.width = 1654;
       c.height = 2339;
       const g = c.getContext('2d');
 
-      // Background
       g.fillStyle = '#ffffff';
       g.fillRect(0, 0, c.width, c.height);
 
-      // Margins
       const mx = 90;
       let y = 100;
       const contentWidth = c.width - mx * 2;
 
-      // Header: CHARGECORE PTE. LTD & Logo
+      // Header
       g.fillStyle = '#0f172a';
       g.font = 'bold 32px sans-serif';
       g.fillText('CHARGECORE PTE. LTD', mx, y);
 
-      // Real ChargeCore Logo matching logo.jpg
       const logoRightX = c.width - mx;
-      g.font = '900 32px sans-serif';
       const brandText = 'CHARGECORE';
+      g.font = '900 32px sans-serif';
       const brandTextW = g.measureText(brandText).width;
       const iconW = 42;
       const totalLogoW = iconW + 12 + brandTextW;
       const logoStartX = logoRightX - totalLogoW;
       const iconStartY = y - 32;
 
-      // Draw green emblem
       g.save();
       g.fillStyle = '#008744';
       g.strokeStyle = '#008744';
-
       const sc = iconW / 100;
-      // 1. Top terminal notch: x: 58%, y: 16%, w: 16%, h: 20%
       g.fillRect(logoStartX + 58 * sc, iconStartY + 16 * sc, 16 * sc, 20 * sc);
-
-      // 2. Middle horizontal prong: x: 28%, y: 44%, w: 40%, h: 16%
       g.beginPath();
       if (typeof g.roundRect === 'function') {
         g.roundRect(logoStartX + 28 * sc, iconStartY + 44 * sc, 40 * sc, 16 * sc, 8 * sc);
@@ -955,8 +946,6 @@
       } else {
         g.fillRect(logoStartX + 28 * sc, iconStartY + 44 * sc, 40 * sc, 16 * sc);
       }
-
-      // 3. Left C curve
       g.lineWidth = 14 * sc;
       g.lineCap = 'round';
       g.beginPath();
@@ -964,7 +953,6 @@
       g.stroke();
       g.restore();
 
-      // Brand text: CHARGECORE in solid black
       g.fillStyle = '#0f172a';
       g.font = '900 32px sans-serif';
       g.textAlign = 'left';
@@ -978,7 +966,6 @@
       g.lineTo(mx + 380, y);
       g.stroke();
 
-      // Title
       y += 65;
       g.fillStyle = '#0f172a';
       g.font = 'bold 36px sans-serif';
@@ -986,32 +973,24 @@
       g.fillText('CHECK LIST KIỂM TRA SAU KHI REWORK', c.width / 2, y);
       g.textAlign = 'left';
 
-      // Info Fields
       y += 55;
-      g.font = '24px sans-serif';
-
       function drawInfoRow(label, value) {
         g.fillStyle = '#0f172a';
         g.font = 'bold 24px sans-serif';
         g.fillText(label, mx, y);
-        // Measure label width to ensure input value never overlaps, aligning values cleanly
         const labelW = g.measureText(label).width;
         const lw = Math.max(490, Math.ceil(labelW) + 20);
         g.font = '24px sans-serif';
-        g.fillStyle = '#0f172a';
         g.fillText(value || '...........................................................................', mx + lw, y);
         y += 42;
       }
-
       drawInfoRow('Ngày:', date);
       drawInfoRow('Mã trạm:', station);
       drawInfoRow('Địa chỉ trạm:', address);
       drawInfoRow('Thông tin thiết bị (serial number):', serial);
 
-      // Section 1
       y += 15;
       g.font = 'bold 27px sans-serif';
-      g.fillStyle = '#0f172a';
       g.fillText('1 Kiểm tra trước khi bật nguồn', mx, y);
       y += 32;
       g.font = 'italic 600 24px sans-serif';
@@ -1019,8 +998,7 @@
       g.fillText('1.1 Kiểm tra bằng mắt thường', mx, y);
       y += 20;
 
-      // Table Drawing Helpers
-      const colW = [260, 760, 190, 210]; // Sums to 1420 = contentWidth
+      const colW = [260, 760, 190, 210];
       const colX = [mx, mx + colW[0], mx + colW[0] + colW[1], mx + colW[0] + colW[1] + colW[2]];
 
       function drawTableHeader() {
@@ -1039,7 +1017,6 @@
         g.fillText('Ghi chú', colX[3] + colW[3]/2, y + 32);
         g.textAlign = 'left';
 
-        // Column lines
         for (let i = 1; i < colX.length; i++) {
           g.beginPath();
           g.moveTo(colX[i], y);
@@ -1049,8 +1026,9 @@
         y += 48;
       }
 
-      function wrapText(text, maxW) {
-        g.font = '20px sans-serif';
+      // Hàm bẻ dòng chữ thông minh (Tránh lấn ô)
+      function wrapText(text, maxW, fontStyle) {
+        g.font = fontStyle; // Thiết lập font trước khi đo để tránh sai số
         const words = text.split(' ');
         const lines = [];
         let cur = '';
@@ -1067,28 +1045,29 @@
         return lines;
       }
 
-      function drawTableRow(name, reqs, status, note, extra) {
+      function drawTableRow(name, reqs, status, note) {
         const startY = y;
-        const maxReqW = colW[1] - 42; // generous safety margin to never overflow
-
-        // Pre-wrap all requirements to know exact line count
+        
+        // Đo và bẻ dòng cho mọi ô
+        const nameLines = wrapText(name, colW[0] - 20, 'bold 22px sans-serif');
+        const maxReqW = colW[1] - 40;
         const bulletLines = [];
         reqs.forEach(r => {
-          const lines = wrapText(r, maxReqW);
-          bulletLines.push(lines);
+          bulletLines.push(wrapText(r, maxReqW, '20px sans-serif'));
         });
+        const noteLines = wrapText(note || '', colW[3] - 20, '19px sans-serif');
 
-        let totalTextLines = 0;
-        bulletLines.forEach(l => { totalTextLines += l.length; });
+        let reqLinesCount = 0;
+        bulletLines.forEach(l => { reqLinesCount += l.length; });
 
-        // Calculate dynamic row height
-        const rowH = Math.max(88, totalTextLines * 26 + (bulletLines.length - 1) * 6 + (extra ? 32 : 0) + 26);
+        // Tự động kéo dài khung table nếu có cột bị xuống dòng nhiều
+        const maxLines = Math.max(nameLines.length, reqLinesCount, noteLines.length);
+        const rowH = Math.max(88, maxLines * 28 + 30); 
 
         g.strokeStyle = '#0f172a';
         g.lineWidth = 1.5;
         g.strokeRect(mx, startY, contentWidth, rowH);
 
-        // Column dividers
         for (let i = 1; i < colX.length; i++) {
           g.beginPath();
           g.moveTo(colX[i], startY);
@@ -1096,65 +1075,52 @@
           g.stroke();
         }
 
-        // Col 1: Name
+        // Vẽ chữ Hạng Mục
         g.fillStyle = '#0f172a';
         g.font = 'bold 22px sans-serif';
         g.textAlign = 'left';
-        g.fillText(name, colX[0] + 16, startY + 36);
+        let nameY = startY + 36;
+        nameLines.forEach(nl => {
+          g.fillText(nl, colX[0] + 10, nameY);
+          nameY += 28;
+        });
 
-        // Col 2: Requirements (properly word-wrapped with indent so text never overflows into col 3)
+        // Vẽ chữ Yêu Cầu
         g.fillStyle = '#0f172a';
         g.font = '20px sans-serif';
-        let reqY = startY + 30;
-
+        let reqY = startY + 34;
         bulletLines.forEach(lines => {
           lines.forEach((line, idx) => {
             if (idx === 0) {
               g.fillText('• ' + line, colX[1] + 16, reqY);
             } else {
-              // Indented wrapped line
               g.fillText('  ' + line, colX[1] + 28, reqY);
             }
-            reqY += 26;
+            reqY += 28;
           });
-          reqY += 4;
+          reqY += 4; // Khoảng cách giữa các gạch đầu dòng
         });
 
-        if (extra) {
-          g.fillStyle = '#047857';
-          g.font = 'bold 20px sans-serif';
-          g.fillText('• ' + extra, colX[1] + 16, reqY + 2);
-          g.fillStyle = '#0f172a';
-        }
-
-        // Col 3: Status - ALWAYS display BOTH OK and NOK in the output
+        // Vẽ Trạng Thái
         g.textAlign = 'center';
         g.font = 'bold 20px sans-serif';
-        g.fillStyle = '#0f172a';
-
         const okBox = status === 'OK' ? '☑' : '□';
         const nokBox = status === 'NOK' ? '☑' : '□';
-        const statusText = 'OK ' + okBox + '   NOK ' + nokBox;
+        g.fillText('OK ' + okBox + '   NOK ' + nokBox, colX[2] + colW[2] / 2, startY + rowH / 2 + 7);
 
-        g.fillText(statusText, colX[2] + colW[2] / 2, startY + rowH / 2 + 7);
-
-        // Col 4: Note (also wrapped if needed)
+        // Vẽ Ghi Chú
         g.textAlign = 'left';
         g.fillStyle = '#334155';
         g.font = '19px sans-serif';
-        if (note) {
-          const noteLines = wrapText(note, colW[3] - 24);
-          let noteY = startY + 34;
-          noteLines.forEach(nl => {
-            g.fillText(nl, colX[3] + 12, noteY);
-            noteY += 24;
-          });
-        }
+        let noteY = startY + 34;
+        noteLines.forEach(nl => {
+          g.fillText(nl, colX[3] + 10, noteY);
+          noteY += 24;
+        });
 
         y += rowH;
       }
 
-      // Draw visual items
       drawTableHeader();
 
       const getItemStatus = (id) => {
@@ -1164,7 +1130,6 @@
         if (row.querySelector('.btn-toggle.active-nok')) return 'NOK';
         return '';
       };
-
       const getItemNote = (id) => {
         const input = document.getElementById('note_' + id);
         return input ? input.value : '';
@@ -1192,7 +1157,6 @@
         'Không có dấu hiệu lỏng chưa kết nối'
       ], getItemStatus('signal_power_cables'), getItemNote('signal_power_cables'));
 
-      // Section 2
       y += 24;
       g.font = 'bold 27px sans-serif';
       g.fillStyle = '#0f172a';
@@ -1221,14 +1185,12 @@
         'BCC: v1.0.0.62'
       ], getItemStatus('software'), getItemNote('software'));
 
-      // Section 3: Conclusion
       y += 26;
       g.font = 'bold 27px sans-serif';
       g.fillStyle = '#0f172a';
       g.fillText('3 Kết luận / Conclusion', mx, y);
       y += 18;
 
-      // Conclusion Table
       const concW = contentWidth / 2;
       g.fillStyle = '#f1f5f9';
       g.fillRect(mx, y, contentWidth, 44);
@@ -1253,7 +1215,6 @@
       g.lineTo(mx + concW, y + 75);
       g.stroke();
 
-      // Radio status
       g.font = 'bold 23px sans-serif';
       if (conclusionVal === 'PASS') {
         g.fillStyle = '#059669';
@@ -1272,7 +1233,6 @@
       g.font = '20px sans-serif';
       g.fillText(conclusionNote || '', mx + concW + 20, y + 45);
 
-      // Signature area on bottom right
       y += 95;
       const sigBoxW = 480;
       const sigX = c.width - mx - sigBoxW;
@@ -1286,36 +1246,33 @@
       g.fillStyle = '#64748b';
       g.fillText('(Ký, ghi rõ họ tên)', sigX + sigBoxW/2, y);
 
-      // Paste finger signature canvas onto exported image
       y += 10;
       try {
         g.drawImage(canvas, sigX + 50, y, sigBoxW - 100, 120);
-      } catch (err) {
-        // ignore
-      }
+      } catch (err) {}
 
-      y += 135;
+      // Lệnh In tên Kỹ Sư
+      y += 160;
       g.fillStyle = '#0f172a';
       g.font = 'bold 26px sans-serif';
-      // Page number 1 at bottom right matching official PDF format
+      g.fillText(signerName, sigX + sigBoxW/2, y);
+
+      y += 45;
       g.fillStyle = '#0f172a';
       g.font = '22px serif';
       g.textAlign = 'right';
       g.fillText('1', c.width - mx, c.height - 40);
       g.textAlign = 'left';
 
-      // Convert to PNG data url
-      const dataUrl = c.toDataURL('image/png', 0.98);
+      const dataUrl = c.toDataURL('image/png', 1.0);
       const cleanStation = station.replace(/[^a-zA-Z0-9_-]/g, '_');
       const filename = 'Checklist_A4_Rework_' + cleanStation + '_' + (date || 'signed') + '.png';
 
-      // Open Modal on Mobile so user can long-press to save into camera roll
       const modal = document.getElementById('imageModal');
       const previewImg = document.getElementById('exportedImagePreview');
       previewImg.src = dataUrl;
       modal.classList.add('open');
 
-      // Setup download button
       const dlBtn = document.getElementById('downloadImgBtn');
       dlBtn.onclick = function() {
         const a = document.createElement('a');
